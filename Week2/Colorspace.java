@@ -28,7 +28,7 @@ class Colorspace {
    static float[] RGBtoHSL(float r, float g, float b) {
         // to do
         float M = Math.max(r, Math.max(g, b));
-        float m = Math.min(r, Math.max(g, b));
+        float m = Math.min(r, Math.min(g, b));
         float s = 0;
         float H = 0;
 
@@ -70,26 +70,12 @@ class Colorspace {
    }
 
    static float[] HSLtoRGB(float h, float s, float l) {
-    float r =0;
-    float g =0;
     float getal1 =  l - 0.5f;
     float getal2 = Math.abs(getal1);
-    
- 
-    
 
+    float cmin =(l + s) + getal2 - (0.5f*s);
+    float cmax =(l + s) + getal2 + (0.5f*s);
 
-
-
-    float b =(l + s) + getal2 - (0.5f*s);
-
-    float y = (h/60f) % 2 - 1;
-    float z = 1 - Math.abs(y);
-    float x = b * z;
-    System.out.println(x);
-    
-     
-    
 
 
     
