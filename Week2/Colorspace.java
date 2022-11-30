@@ -70,12 +70,30 @@ class Colorspace {
    }
 
    static float[] HSLtoRGB(float h, float s, float l) {
+    float b= 0;
     float getal1 =  l - 0.5f;
+
     float getal2 = Math.abs(getal1);
 
     float cmin =(l + s) + getal2 - (0.5f*s);
     float cmax =(l + s) + getal2 + (0.5f*s);
-
+    float modulo = h % 360;
+    if (modulo < 120) {
+        b = cmin;
+    }
+    if (modulo >= 120 || modulo < 180 ) {
+        b = cmin + (cmax - cmin) * (h % (360 - 120) / 60);
+    }
+    if (modulo >= 180 || modulo < 300 ) {
+        b = cmax;
+    }
+    if (modulo >= 300 || modulo < 360 ) {
+        b = cmax -(cmax-cmin) * (h % (360 - 300) / 60 );
+    }
+ 
+    
+    float g = b * (h + 120);
+    float r = b * (h - 120);
 
 
     
@@ -90,10 +108,13 @@ class Colorspace {
 
 
 
-//    static float[] transparency(float r1, float g1, float b1, float alpha, float r2, float g2, float b2) {
-//        // to do
-//        return new float[] {r, g, b};
-//    }
+   static float[] transparency(float r1, float g1, float b1, float alpha, float r2, float g2, float b2) {
+       // to do
+       float r = r1 * alpha + r2*(1-alpha);
+       float g = g1 * alpha + g2*(1-alpha);
+       float b = b1 * alpha + b2*(1-alpha);
+       return new float[] {r, g, b};
+   }
 
     public static void main(String[] args) {
         // testcode
@@ -102,6 +123,6 @@ class Colorspace {
         //System.out.println(Arrays.toString(CMYtoRGB(0.4f, 0.5f, 0.6f))); // (0.6, 0.5, 0.4)
  //      System.out.println(Arrays.toString(RGBtoHSL(0.4f, 0.5f, 0.6f))); // (210.0, 0.2, 0.5)
      System.out.println(Arrays.toString(HSLtoRGB(100f, 0.5f, 0.6f))); // (0.533, 0.8, 0.4)
-//        System.out.println(Arrays.toString(transparency(0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f))); // (0.52, 0.62, 0.72)/
+    // System.out.println(Arrays.toString(transparency(0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f))); // (0.52, 0.62, 0.72)/
     }
 }
