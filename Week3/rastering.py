@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+import math 
 
 GRID_SIZE = 10
 
@@ -49,14 +50,31 @@ class Grid:
             x = round(x)
             y = round(y)
             self.points.append((x, y, c))
+
         
-    def rasterline(self, x0, y0, x1, y2):
+    def rasterline(self, x0, y0, x2, y2):
+        #wat wil ik doen
+        grid.addPoint(x0,y0)
+        grid.addPoint(x2,y2)
+        deltax = int
+        deltay = int
+        octant = int
+         
+        deltax = x2 - x0
+        deltay = y2 - y0
+        ocant = math.degrees(math.atan(deltay/deltax))
+
+        print(ocant)
+         
+        
         # to do
         pass
 
 # testcode
 # let op: de beoordeling wordt gedaan op basis van andere waarden
 grid = Grid(20, 20)
-grid.rasterline(0, 0, 19, 19)
-grid.rasterline(0, 10, 19, 0)
+
+grid.rasterline(0,2,4,8) 
+#grid.rasterline(5, 0, 19, 19)
+#grid.rasterline(0, 10, 19, 0)
 grid.draw()
