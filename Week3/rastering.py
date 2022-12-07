@@ -3,6 +3,8 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import math
 
+import numpy as np
+
 GRID_SIZE = 10
 
 class Grid:
@@ -52,65 +54,69 @@ class Grid:
             self.points.append((x, y, c))
         
     def rasterline(self, x1, y1, x2, y2):
-        deltax = x2 - x1
-        deltay = y2 - y1
-
-        deltax1 = abs(deltax);
-        deltay1 = abs(deltay);
-
-        px = 2 * deltay1 - deltax1;
-        py = 2 * deltax1 - deltay1;
-
-        D = (2*deltay) - deltax
-        y = y1
-
-        if (deltay1 <= deltax1):
-            if (deltax >= 0): 
-                x = x1; y = y1; xe = x2;
-            else: 
-                x = x2; y = y2; xe = x1;
-            
-            grid.addPoint(x, y)
-            while x < xe :
-                x = x + 1;
-                if (px < 0): 
-                    px = px + 2 * deltay1
-                else:
-                    if ((deltax < 0 and deltay < 0) or (deltax > 0 and deltay > 0)):
-                        y = y + 1
-                    else:
-                        y = y - 1
-                    px = px + 2 * (deltay1 - deltax1)
-                grid.addPoint(x,y)
-             
+        grid.addPoint(x1,y1)
+        grid.addPoint(x2,y2)
+        #bereken delta x 
+        dx = abs(x2 - x1)
+        #bereken delta y 
+        dy = abs(y2 - y1)
         
-                 
-        else:
-            if (deltay >= 0):
-                x = x1; y = y1; ye = y2
-            else:
-                x = x2; y = y2; ye = y1
-            grid.addPoint(x,y)
+        #S
+        m = dy/dx
+        
+        # step 3 perform test to check if pk < 0
+        flag = True
+        
+        line_pixel = []
+        line_pixel.append((x1,y1))
+        
+        step = 1
+        if x1>x2 or y1>y2:
+            step = -1
 
-            while x < ye:
-                y = y + 1
-                if (py <= 0):
-                    py = py + 2 * deltax1
-                else:
-                    if ((deltax < 0 and deltay<0) or (deltax > 0 and deltay > 0)):
-                        x = x + 1
-                    else:
-                        x = x - 1
-                    py = py + 2 * (deltay1 - deltax1)
+        mm = False   
+        if m < 1:
+            x1, x2 ,y1 ,y2 = y1, y2, x1, x2
+            dx = abs(x2 - x1)
+            dy = abs(y2 - y1)
+            mm = True
+            
+        p0 = 2*dx - dy
+        x = x1
+        y = y1
+        
+        for i in range(abs(y2-y1)):
+            if flag:
+                x_previous = x1
+                p_previous = p0
+                p = p0
+                flag = False
+            else:
+                x_previous = x
+                p_previous = p
+                
+            if p >= 0:
+                x = x + step
+
+            p = p_previous + 2*dx -2*dy*(abs(x-x_previous))
+            y = y + 1
+            
+            if mm:
+                grid.addPoint(y,x)
+                
+            else:
                 grid.addPoint(x,y)
-              
+                
         pass
 
 # testcode
 # let op: de beoordeling wordt gedaan op basis van andere waarden
 grid = Grid(50, 50)
 #grid.rasterline(0, 0, 19, 19)
-grid.addPoint( 10,5)
-grid.addPoint(19,40)
-grid.rasterline(10, 5, 19, 20)
+# grid.addPoint(0,3)
+# grid.addPoint(30,40)
+grid.rasterline(0, 3, 30, 40)
 grid.draw()
+
+
+
