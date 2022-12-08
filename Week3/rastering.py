@@ -53,70 +53,99 @@ class Grid:
             y = round(y)
             self.points.append((x, y, c))
         
-    def rasterline(self, x1, y1, x2, y2):
-        grid.addPoint(x1,y1)
-        grid.addPoint(x2,y2)
-        #bereken delta x 
-        dx = abs(x2 - x1)
-        #bereken delta y 
-        dy = abs(y2 - y1)
-        
-        #S
-        m = dy/dx
-        
-        # step 3 perform test to check if pk < 0
-        flag = True
-        
-        line_pixel = []
-        line_pixel.append((x1,y1))
-        
-        step = 1
-        if x1>x2 or y1>y2:
-            step = -1
+    def rasterline(self, x0, y0, x1, y1):
+        #voor meer informatie over hoe de formule werkt bezoek https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+        # controleerd of het verschil van delta y kleiner dan delta x is
+        if abs(y1- y0) < abs(x1 - x0):
+            if x0 > x1:
+                # calculate the difference
+                dx = x1 - x0
+                dy = y1 - y0
 
-        mm = False   
-        if m < 1:
-            x1, x2 ,y1 ,y2 = y1, y2, x1, x2
-            dx = abs(x2 - x1)
-            dy = abs(y2 - y1)
-            mm = True
-            
-        p0 = 2*dx - dy
-        x = x1
-        y = y1
-        
-        for i in range(abs(y2-y1)):
-            if flag:
-                x_previous = x1
-                p_previous = p0
-                p = p0
-                flag = False
+                yi = 1
+                if dy < 0:
+                    yi = -1
+                    dy = -dy
+                
+                d = (2 * dy) - dx
+                y = y0
+
+                for x in range(x0, x1 + 1):
+                    grid.addPoint(x, y)
+                    if d > 0:
+                        y = y + yi
+                        d = d + (2 * (dy - dx))
+                    else:
+                        d = d + 2 * dy
             else:
-                x_previous = x
-                p_previous = p
-                
-            if p >= 0:
-                x = x + step
+             
+                dx = x0 - x1
+                dy = y0 - y1
 
-            p = p_previous + 2*dx -2*dy*(abs(x-x_previous))
-            y = y + 1
-            
-            if mm:
-                grid.addPoint(y,x)
+                yi = 1
+                if dy < 0:
+                    yi = -1
+                    dy = -dy
                 
+                d = (2 * dy) - dx
+                y = y1
+
+                for x in range(x0, x1 + 1):
+                    grid.addPoint(x, y)
+                    if d > 0:
+                        y = y + yi
+                        d = d + (2 * (dy - dx))
+                    else:
+                        d = d + 2 * dy
+        else:
+            if y0 > y1:
+                dx = x0 - x1
+                dy = y0 - y1
+
+                xi = 1
+                if dx < 0:
+                    xi = -1
+                    dx = -dx
+                
+                d = (2 * dx) - dy
+                x = x1
+
+                for y in range(y1, y0 + 1):
+                    grid.addPoint(x, y)
+                    if d > 0:
+                        x = x + xi
+                        d = d + (2 * (dx - dy))
+                    else:
+                        d = d + 2 * dx
             else:
-                grid.addPoint(x,y)
-                
-        pass
+                dx = x1 - x0
+                dy = y1 - y0
 
+                xi = 1
+                if dx < 0:
+                    xi = -1
+                    dx = -dx
+                
+                d = (2 * dx) - dy
+                x = x0
+
+                for y in range(y0, y1 + 1):
+                    grid.addPoint(x, y)
+                    if d > 0:
+                        x = x + xi
+                        d = d + (2 * (dx - dy))
+                    else:
+                        d = d + 2 * dx
+ 
+
+ 
 # testcode
 # let op: de beoordeling wordt gedaan op basis van andere waarden
 grid = Grid(50, 50)
-#grid.rasterline(0, 0, 19, 19)
+grid.rasterline(0, 0, 19, 19)
 # grid.addPoint(0,3)
-# grid.addPoint(30,40)
-grid.rasterline(0, 3, 30, 40)
+grid.rasterline(0,40 , 40,0)
 grid.draw()
 
-
+    
 
