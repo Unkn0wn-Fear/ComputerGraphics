@@ -130,6 +130,3 @@ class Grid:
 grid = Grid(20, 20)
 grid.rasterline(5,0,0,5)
 grid.draw()
-
-    
-
