@@ -66,20 +66,17 @@ def checkCollision():
     print("x is = " + str(x))
     print("y is = " + str(y))
     print("z is = " + str(z))
+   
 
-    rdn = (random.randint(0, 1))
-    rdf = float(rdn)
-    
     if x < -1 or x > 1:
-        vx = -vx +  (-vx*(rdf))
+        vx = -vx * random.uniform(0.8, 1.2)
     if y < -1 or y > 1:
-        vy = -vy + (-vy*(rdf))
+        vy = -vy * random.uniform(0.8, 1.2)
     if z < -1 or z > 1:
-        vz = -vz + (-vz*(rdf))
-
-    x += vx + (vx*(rdf))
-    y += vy + (vy*(rdf))
-    z += vz + (vz(rdf))
+        vz = -vz * random.uniform(0.8, 1.2)
+    x += vx  
+    y += vy  
+    z += vz 
 
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
