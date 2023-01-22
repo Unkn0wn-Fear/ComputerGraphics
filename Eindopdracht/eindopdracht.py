@@ -4,9 +4,10 @@ import random
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+from PIL import Image
 
 x, y, z = 0.0, 0.0, 0.0
-vx, vy, vz = 0.003, 0.002, 0.001
+vx, vy, vz = 0.03, 0.02, 0.01
 camera_x, camera_y, camera_z = 0, 0, 1
 
 
@@ -49,6 +50,7 @@ def keyboard(key, x, y):
     global camera_x, camera_y, camera_z
     if key == b'w':
         camera_y += 0.1
+        
     elif key == b's':
         camera_y -= 0.1
     elif key == b'a':
@@ -58,9 +60,21 @@ def keyboard(key, x, y):
 
 def drawSphere():
     quad = gluNewQuadric()
+    gluQuadricTexture(quad, GL_TRUE)
     glTranslatef(x, y, z)
-    gluSphere(quad, 0.1, 20, 20)
+    gluSphere(quad, 0.2, 20, 20)
+    
+  
 
+def drawPlane():
+    glBegin(GL_QUADS)
+    glVertex3f(-1, -1, -1)
+    glVertex3f(-1, 1, -1)
+    glVertex3f(1, 1, -1)
+    glVertex3f(1, -1, -1)
+    glEnd()
+
+    
 def checkCollision():
     global x, y, z, vx, vy, vz
     print("x is = " + str(x))
@@ -68,12 +82,18 @@ def checkCollision():
     print("z is = " + str(z))
    
 
-    if x < -1 or x > 1:
+    if x < (-1 + 0.2 ) or x > (1 - 0.2):
         vx = -vx * random.uniform(0.8, 1.2)
-    if y < -1 or y > 1:
+        if (vx ==  0): 
+            vx + 0.01
+    if y < (-1 + 0.2) or y > (1 - 0.2):
         vy = -vy * random.uniform(0.8, 1.2)
-    if z < -1 or z > 1:
+        if (vx == 0): 
+            vy + 0.01
+    if z < (-1+0.2) or z > (1 -0.2):
         vz = -vz * random.uniform(0.8, 1.2)
+        if (vx == 0): 
+            vz + 0.01
     x += vx  
     y += vy  
     z += vz 
@@ -85,18 +105,50 @@ def display():
 
     # Move the camera
 
+    
+
 
     gluLookAt(camera_x, camera_y, camera_z, 1, 0, 0, 0, 1, 0)
     # Draw the cube
+    #drawPlane()
+
+    glEnable(GL_LIGHTING)
+    glEnable(GL_LIGHT0)
+
+    light_pos = (1.0, 0.0, 1.0, 0.0)
+    glLight(GL_LIGHT0, GL_AMBIENT, [1, 1, 1])
+  
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos)
+
     drawCube()
+    drawPlane()
 
-    # Draw the sphere
+#   # Enable texture mapping
+#     glEnable(GL_TEXTURE_2D)
+
+#     # Load the image
+#     img = Image.open("Eindopdracht/die-petronas-towers-sind.jpg")
+
+#     # Bind the image as a texture
+#     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+#     texture = glGenTextures(1)
+#     glBindTexture(GL_TEXTURE_2D, texture)
+#     glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+#     glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+#     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img.tobytes())
+    
     drawSphere()
+    
+#    glDisable(GL_TEXTURE_2D)
 
+
+
+   
     checkCollision()
-
+    glDisable(GL_LIGHTING)
     glutSwapBuffers()
     glutPostRedisplay()
+
 
 
 glutInit()
@@ -108,15 +160,7 @@ glEnable(GL_DEPTH_TEST)
 glMatrixMode(GL_PROJECTION)
 glFrustum(-1.333, 1.333, -1, 1, 1, 5)
 glMatrixMode(GL_MODELVIEW)
-glEnable(GL_LIGHTING)
-glEnable(GL_LIGHT0)
-glLight(GL_LIGHT0, GL_POSITION, [-3, 4, 5])
-glLight(GL_LIGHT0, GL_DIFFUSE, [0.5, 0.5, 0.5])
-glLight(GL_LIGHT0, GL_AMBIENT, [0.5, 0.5, 0.5])
-glLight(GL_LIGHT0, GL_SPECULAR, [1, 1, 1])
-glMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, [1, 1, 0, 1])
-glMaterial(GL_FRONT_AND_BACK, GL_SPECULAR, [1, 1, 1, 1])
-glMaterial(GL_FRONT_AND_BACK, GL_SHININESS, 40)
+
 glutDisplayFunc(display)
 glEnable(GL_DEPTH_TEST)
 glutKeyboardFunc(keyboard)    
